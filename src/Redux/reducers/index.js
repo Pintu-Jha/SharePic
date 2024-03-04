@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import auth from "./auth";
 import types from '../types';
 import appSetting from '../reducers/appSettings'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const appReducer = combineReducers({
     auth,

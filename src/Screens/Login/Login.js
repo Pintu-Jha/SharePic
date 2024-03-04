@@ -21,11 +21,15 @@ import {useSelector} from 'react-redux';
 import TextComp from '../../Components/TextComp';
 import {showError} from '../../Utills/HelperFunctions';
 import validator from '../../Utills/validations';
+import { userLogin } from '../../Redux/actions/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
+  const checkUser = useSelector(state => state?.auth?.isUserLoggedIn)
+ 
 
   const isValidData = () => {
     const error = validator({
@@ -39,11 +43,16 @@ const Login = () => {
     return true;
   };
 
-  const onLogin = () => {
+  const onPressLogin = async() => {
     const checkValid = isValidData();
-    if (checkValid) {
-      alert('hii');
+    const storedUser = await AsyncStorage.getItem('user');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+    if (checkValid && user.email === email  ) {
+      // console.log(user.email);
+     userLogin(checkUser)
     }
+  }
   };
 
   return (
@@ -94,7 +103,7 @@ const Login = () => {
                 justifyContent: 'flex-end',
                 marginBottom: spacing.MARGIN_20,
               }}>
-              <BottonComp text={strings.LOGIN} onPress={onLogin} />
+              <BottonComp text={strings.LOGIN} onPress={onPressLogin} />
             </View>
           </View>
         </TouchableWithoutFeedback>

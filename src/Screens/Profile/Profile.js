@@ -11,12 +11,18 @@ import imagePath from '../../Constants/imagePath';
 import {spacing} from '../../styles/spacing';
 import {textScale} from '../../styles/responsiveStyles';
 import navigationString from '../../Navigations/navigationString';
+import ButtonComp from '../../Components/BottonComp'
+import { logout } from '../../Redux/actions/auth';
+import strings from '../../Constants/lang';
 
 // create a component
 const Profile = ({navigation}) => {
   const {selectedTheme} = useSelector(state => state?.appSetting);
 
   const isDark = selectedTheme == 'dark';
+  const onLogout = ()=>{
+     logout()
+}
 
   const listHeader = () => {
     return (
@@ -50,8 +56,22 @@ const Profile = ({navigation}) => {
 
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => navigation.navigate(navigationString.PORFILE_EDIT)}>
-            <Image source={imagePath.icEdit} />
+            onPress={() => navigation.navigate(navigationString.PORFILE_EDIT)} 
+            style={{flexDirection:"row",alignItems:'center',}}
+            >
+            <Image source={imagePath.icEdit} style={{width:spacing.WIDTH_20,height:spacing.HEIGHT_20}} />
+            <ButtonComp
+                            text={strings.LOGOUT}
+                            onPress={onLogout}
+                            style={{
+                            backgroundColor: 'transparent',
+                            borderWidth: 0.5,
+                            borderColor: isDark ? colors.whiteColor : colors.blackColor,
+                            paddingHorizontal: spacing.PADDING_6,
+                            height: spacing.HEIGHT_36,
+                            marginLeft:spacing.MARGIN_12
+                        }}
+                        />
           </TouchableOpacity>
         </View>
         <View style={{marginVertical: spacing.MARGIN_16}}>

@@ -46,6 +46,7 @@ export default {
     CREATE_POST:"Create post",
     ADD_POST:"Add post",
     NEXT:"Next",
-    DESCRIPTION:"description..."
+    DESCRIPTION:"description...",
+    LOGOUT:'Logout'
 
 }

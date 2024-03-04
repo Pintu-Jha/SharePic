@@ -1,4 +1,4 @@
-//import liraries
+
 import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, PermissionsAndroid, Platform, Button, Image, TouchableOpacity } from 'react-native';
 import WrapperContainer from '../../Components/WapperContainer';
@@ -12,7 +12,6 @@ import navigationStrings from '../../Navigations/navigationString';
 import ImagePicker from 'react-native-image-crop-picker';
 import { spacing } from '../../styles/spacing';
 
-// create a component
 const CreatePost = ({ navigation }) => {
 
     const [photos, setPhotos] = useState([])

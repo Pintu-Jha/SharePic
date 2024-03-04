@@ -14,6 +14,7 @@ import ModalComp from '../../Components/ModalComp';
 import { spacing } from '../../styles/spacing';
 import imagePath from '../../Constants/imagePath';
 import strings from '../../Constants/lang';
+import { logout } from '../../Redux/actions/auth';
 
 
 // create a component
@@ -34,6 +35,8 @@ const ProfileEdit = ({ navigation }) => {
     const onSave = () => {
         alert("dfdf")
     }
+  
+    // console.log('dfdsf',logout);
 
     return (
         <WrapperContainer>
@@ -100,6 +103,7 @@ const ProfileEdit = ({ navigation }) => {
                             marginTop: spacing.MARGIN_16
                         }}
                     />
+                     
 
                 </View>
 

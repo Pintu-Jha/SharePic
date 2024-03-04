@@ -13,6 +13,7 @@ import TextComp from '../../Components/TextComp';
 import {useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import navigationString from '../../Navigations/navigationString';
+import { userSignup } from '../../Redux/actions/auth';
 
 const Signup = ({navigation}) => {
   const [userName, setUserName] = useState('');
@@ -24,7 +25,8 @@ const Signup = ({navigation}) => {
 
 
   const onPressSignup = () => {
-    navigation.navigate(navigationString.OTP_VERIFICATION);
+        userSignup({email,password,fullName,userName})
+          navigation.navigate(navigationString.LOGIN);
   };
 
   return (
