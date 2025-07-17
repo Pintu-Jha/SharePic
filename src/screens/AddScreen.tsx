@@ -19,22 +19,23 @@ import {
 import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
-import Styles from '../config/Styles';
+import type { CameraDevice } from 'react-native-vision-camera';
+import Styles from '@config/Styles';
 
 interface ITypes {
   navigation: any;
 }
 const AddScreen: React.FC<ITypes> = ({navigation}) => {
+  // All hooks at the top
   const isScreenFocused = useIsFocused();
   const [isFocused, setFocused] = useState<boolean>(false);
   const [image, setImage] = useState<any>(null);
   const [isTorch, setIsTorch] = useState<boolean>(false);
-  const [deviceType, setDeviceType] = useState<any>(null);
   const [deviceDir, setDeviceDir] = useState<CameraPosition>('back');
-
-  const devices = useCameraDevices(deviceType);
+  const devices = useCameraDevices();
   const camera = useRef<Camera>(null);
-  const device = devices[deviceDir];
+  const device = devices.find((d) => d.position === deviceDir);
+
   useFocusEffect(
     useCallback(() => {
       setImage(null);
@@ -78,7 +79,12 @@ const AddScreen: React.FC<ITypes> = ({navigation}) => {
   useEffect(() => {
     permissionCheck();
   }, []);
-  if (device == null) return <ActivityIndicator color={'black'} />;
+
+  // Conditional returns AFTER all hooks
+  function isCameraDevice(dev: any): dev is CameraDevice {
+    return dev && typeof dev === 'object' && 'id' in dev && 'name' in dev;
+  }
+  if (!isCameraDevice(device)) return <ActivityIndicator color={'black'} />;
   if (image != null) {
     return (
       <SafeAreaView style={Styles.flexContainer}>

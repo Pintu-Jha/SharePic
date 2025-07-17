@@ -1,22 +1,19 @@
 // src/navigation/Routes.tsx
-import React, { useContext } from 'react';
+import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AuthContext } from '../context/authContext';
 
 import Auth from './Auth';
 import Tabs from './Tabs';
-import EditProfileScreen from '../screens/EditProfileScreen';
-import EditPostScreen from '../screens/EditPostScreen';
+import EditProfileScreen from '@screens/EditProfileScreen';
+import EditPostScreen from '@screens/EditPostScreen';
 
 const Stack = createStackNavigator();
 
 function Routes() {
-  const context = useContext(AuthContext);
-
-  if (!context) return null; 
-
-  const { user, initializing } = context;
+  // TODO: Replace with actual authentication logic (e.g., from Redux or AsyncStorage)
+  const user = true; // Placeholder: always authenticated
+  const initializing = false;
 
   if (initializing) {
     return (

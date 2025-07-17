@@ -1,22 +1,17 @@
 import {Text, View, TouchableOpacity, Image, Dimensions} from 'react-native';
 import React, {
   useCallback,
-  useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
   memo,
 } from 'react';
-import {PostContext} from '../context/PostContext';
+
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {AuthContext} from '../context/authContext';
-import {collection, doc, getDoc} from 'firebase/firestore';
-import {firestore} from '../config/FirebaseConfig';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import styles from '../config/Styles';
+import styles from '@config/Styles';
 
 var width = Dimensions.get('window').width;
 
@@ -26,40 +21,21 @@ interface Types {
   item?: any;
 }
 const PostItem: React.FC<Types> = ({item, onDelete, onPress}) => {
-  const {isOpen, setIsOpen} = useContext(PostContext);
-  const {user} = useContext(AuthContext);
-
+  // Context and Firebase removed. User data should be passed as prop or fetched via RTK Query if needed.
   const [userData, setUserData] = useState<any>(null);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['1%', '50%'], []);
   const handleSheet = useCallback(
     (input: any) => {
-      !isOpen
-        ? bottomSheetRef.current?.expand()
-        : bottomSheetRef.current?.close() && setIsOpen(false);
-      if (input) {
-        bottomSheetRef.current?.expand();
-        setIsOpen(true);
-      }
+      bottomSheetRef.current?.expand();
     },
-    [isOpen],
+    []
   );
   const handleSheetChanges = useCallback((index: number) => {}, []);
 
-  const getUser = async () => {
-    const refCol = collection(firestore, 'users');
-    const refDoc = doc(refCol, item.userId);
-    await getDoc(refDoc).then(snap => {
-      if (snap.exists()) {
-        setUserData(snap.data());
-      }
-    });
-  };
-
-  useEffect(() => {
-    getUser();
-  }, []);
+  // Dummy user for demonstration; replace with actual user logic as needed
+  const user = { uid: 'demo' };
 
   return (
     <View key={item.index}>
@@ -88,10 +64,9 @@ const PostItem: React.FC<Types> = ({item, onDelete, onPress}) => {
         <TouchableOpacity onPress={onPress}>
           <Image
             source={{
-              uri: userData
-                ? userData?.userImg ||
-                  'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'
-                : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg',
+              uri:
+                userData?.userImg ||
+                'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg',
             }}
             style={styles.avatarImages}
           />
@@ -108,7 +83,7 @@ const PostItem: React.FC<Types> = ({item, onDelete, onPress}) => {
             <Text style={styles.postCreateText}>created a new post</Text>
           </View>
           <Text style={styles.postCreateTimeText}>
-            {moment(item.postTime.toDate()).fromNow()}
+            {moment(item.postTime?.toDate ? item.postTime.toDate() : item.postTime).fromNow()}
           </Text>
         </View>
         <View style={styles.postIconContainer}>

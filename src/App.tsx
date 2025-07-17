@@ -1,14 +1,15 @@
+import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
 import 'react-native-gesture-handler';
-import Providers from './context';
-import Routes from './navigation/Routes';
-import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import Routes from '@navigation/Routes';
 
 function App() {
   return (
     <NavigationContainer>
-      <Providers>
+      <Provider store={store}>
         <SafeAreaView style={{ flex: 1 }}>
           <StatusBar
             translucent
@@ -17,7 +18,7 @@ function App() {
           />
           <Routes />
         </SafeAreaView>
-      </Providers>
+      </Provider>
     </NavigationContainer>
   );
 }

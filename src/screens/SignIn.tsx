@@ -1,46 +1,36 @@
 // src/screens/SignIn.tsx
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import Styles from '../config/Styles';
-import { UserContext } from '../context/UserContext';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLoginMutation } from '@api/sharePicApi';
+import Styles from '@config/Styles';
 
 const SignIn = () => {
   const navigation = useNavigation();
-  const userContext = useContext(UserContext);
-
   const [localEmail, setLocalEmail] = useState('');
   const [localPassword, setLocalPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  if (!userContext) {
-    console.error('UserContext not found. Ensure SignIn is wrapped in UserProvider.');
-    return (
-      <Text style={{ color: 'red', textAlign: 'center', marginTop: 50 }}>
-        Application Error: UserContext not found.
-      </Text>
-    );
-  }
-
-  const { signIn } = userContext;
+  const [login, { isLoading }] = useLoginMutation();
 
   const handleSignIn = async () => {
     if (!localEmail || !localPassword) {
       Alert.alert('Missing Fields', 'Please fill in both email and password.');
       return;
     }
-
-    setLoading(true);
     try {
-      await signIn(localEmail, localPassword);
-      // Optionally navigate after successful sign-in
-      // navigation.navigate('Home' as never); 
+      const result: any = await login({ email: localEmail, password: localPassword }).unwrap();
+      if (result && result.token) {
+        await AsyncStorage.setItem('jwt', result.token);
+        // Optionally navigate after successful sign-in
+        // navigation.navigate('Home' as never);
+      } else {
+        Alert.alert('Sign In Failed', 'No token received.');
+      }
     } catch (error: any) {
       console.error('SignIn Error:', error);
-      Alert.alert('Sign In Failed', error?.message || 'Something went wrong.');
-    } finally {
-      setLoading(false);
+      Alert.alert('Sign In Failed', error?.data?.message || 'Something went wrong.');
     }
   };
 
@@ -89,11 +79,11 @@ const SignIn = () => {
 
         <View style={Styles.authButtonContainer}>
           <TouchableOpacity
-            style={[Styles.authButtonStyle, loading && { opacity: 0.6 }]}
+            style={[Styles.authButtonStyle, isLoading && { opacity: 0.6 }]}
             onPress={handleSignIn}
-            disabled={loading}
+            disabled={isLoading}
           >
-            {loading ? (
+            {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={Styles.authButtonText}>Sign In</Text>
