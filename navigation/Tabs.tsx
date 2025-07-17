@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {PostProvider} from '../context/PostProvider';
-import {AuthContext} from '../context/AuthContext';
+import {AuthContext} from '../context/authContext';
 import {StackNavigationProp} from '@react-navigation/stack';
 //screens
 import HomeScreen from '../screens/HomeScreen';

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "564365645517",
+    "project_id": "sharepic-617fe",
+    "storage_bucket": "sharepic-617fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564365645517:android:89858a5990bbd63d683b84",
+        "android_client_info": {
+          "package_name": "com.sharepic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD11agiDHyyi9sv0isSM3MPvGM6mChpsSM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

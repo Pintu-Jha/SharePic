@@ -12,7 +12,7 @@ import {PostContext} from '../context/PostContext';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {AuthContext} from '../context/AuthContext';
+import {AuthContext} from '../context/authContext';
 import {collection, doc, getDoc} from 'firebase/firestore';
 import {firestore} from '../config/FirebaseConfig';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';

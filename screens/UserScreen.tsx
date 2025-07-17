@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {UserContext} from '../context/UserContext';
-import {AuthContext} from '../context/AuthContext';
+import {AuthContext} from '../context/authContext';
 import styles from '../config/Styles';
 import {
   collection,

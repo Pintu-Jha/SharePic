@@ -1,7 +1,7 @@
 import {useContext, useState} from 'react';
 import { db, storage } from '../config/FirebaseConfig';
 import {PostContext} from './PostContext';
-import {AuthContext} from './AuthContext';
+import {AuthContext} from './authContext';
 import {
   collection,
   deleteDoc,

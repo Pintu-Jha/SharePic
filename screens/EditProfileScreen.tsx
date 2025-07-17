@@ -19,7 +19,7 @@ import React, {
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/authContext';
 import ImagePicker from 'react-native-image-crop-picker';
 import { doc, setDoc } from 'firebase/firestore';
 import { db, storage } from '../config/FirebaseConfig';

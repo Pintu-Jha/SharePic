@@ -10,7 +10,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import Styles from '../config/Styles';
 import { Timestamp, addDoc, collection } from 'firebase/firestore';
 import { db, storage } from '../config/FirebaseConfig';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/authContext';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 interface Params {

@@ -1,88 +1,79 @@
-import { useContext, useState } from 'react';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut as firebaseSignOut,
-  updateProfile,
-} from 'firebase/auth';
-import { auth, db } from '../config/FirebaseConfig';
-import { UserContext } from './UserContext';
-import {
-  Timestamp,
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-} from 'firebase/firestore';
-import { AuthContext } from './AuthContext';
+import auth from '@react-native-firebase/auth';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { UserContext, UserData } from './UserContext';
 
-export const UserProvider: React.FC<User> = ({ children }) => {
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [userData, setUserData] = useState<any>(null);
-  const { user } = useContext(AuthContext);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const createAccount = async () => {
-    try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-      const user = res.user;
-      await updateProfile(user, { displayName: name });
-      const docRef = doc(db, 'users', user.uid);
-      await setDoc(docRef, {
-        fName: '',
-        lName: '',
-        email: email,
-        createdAt: Timestamp.fromDate(new Date()),
-        about: '',
-        country: '',
-        phone: '',
-        userImg: null,
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    const result = await auth().createUserWithEmailAndPassword(email, password);
+    const uid = result.user.uid;
+  
+    const newUser: UserData = {
+      fName: name,
+      lName: '',
+      email,
+      createdAt: firestore.FieldValue.serverTimestamp() as FirebaseFirestoreTypes.Timestamp,
+      about: '',
+      country: '',
+      phone: '',
+      userImg: null,
+    };
+  
+    await firestore().collection('users').doc(uid).set(newUser);
+    setUserData(newUser);
   };
-
-  const signIn = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      console.error(error);
-    }
+  
+  const signIn = async (email: string, password: string) => {
+    await auth().signInWithEmailAndPassword(email, password);
   };
 
   const signOut = async () => {
-    await firebaseSignOut(auth);
+    await auth().signOut();
+    setUserData(null);
   };
 
   const getUser = async () => {
-    const refCol = collection(db, 'users');
-    const refDoc = doc(refCol, `${user?.uid}`);
-    await getDoc(refDoc).then(snap => {
-      if (snap.exists()) {
-        setUserData(snap.data());
+    const currentUser = auth().currentUser;
+    if (currentUser) {
+      const userDoc = await firestore().collection('users').doc(currentUser.uid).get();
+      if (userDoc.exists()) {
+        setUserData(userDoc.data() as UserData);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (user) {
+        getUser();
+      } else {
+        setUserData(null);
       }
     });
-  };
+    return unsubscribe;
+  }, []);
 
   return (
     <UserContext.Provider
       value={{
         email,
         password,
+        name,
         setEmail,
         setPassword,
+        setName,
         createAccount,
         signIn,
         signOut,
-        name,
-        setName,
         getUser,
         userData,
         setUserData,
-      }}
-    >
+      }}>
       {children}
     </UserContext.Provider>
   );

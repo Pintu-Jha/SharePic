@@ -1,64 +1,111 @@
-import {Text, View, TextInput,TouchableOpacity} from 'react-native';
-import React ,{useContext}from 'react';
+// src/screens/SignIn.tsx
+import React, { useContext, useState } from 'react';
+import { Alert, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {ParamListBase, useNavigation } from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import Styles from '../config/Styles';
 import { UserContext } from '../context/UserContext';
-import styles from '../config/Styles';
 
 const SignIn = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-    const {setEmail,setPassword,signIn} = useContext(UserContext)
+  const navigation = useNavigation();
+  const userContext = useContext(UserContext);
+
+  const [localEmail, setLocalEmail] = useState('');
+  const [localPassword, setLocalPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  if (!userContext) {
+    console.error('UserContext not found. Ensure SignIn is wrapped in UserProvider.');
+    return (
+      <Text style={{ color: 'red', textAlign: 'center', marginTop: 50 }}>
+        Application Error: UserContext not found.
+      </Text>
+    );
+  }
+
+  const { signIn } = userContext;
+
+  const handleSignIn = async () => {
+    if (!localEmail || !localPassword) {
+      Alert.alert('Missing Fields', 'Please fill in both email and password.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await signIn(localEmail, localPassword);
+      // Optionally navigate after successful sign-in
+      // navigation.navigate('Home' as never); 
+    } catch (error: any) {
+      console.error('SignIn Error:', error);
+      Alert.alert('Sign In Failed', error?.message || 'Something went wrong.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <View style={styles.flexContainer}>
-      <View style={styles.authHeaderTextContainer}>
-        <Text style={styles.authHeaderText}>Welcome Back</Text>
-        <Text style={styles.authSubText}>sign in to access your account</Text>
+    <View style={Styles.flexContainer}>
+      <View style={Styles.authHeaderTextContainer}>
+        <Text style={Styles.authHeaderText}>Welcome Back</Text>
+        <Text style={Styles.authSubText}>Sign in to access your account</Text>
       </View>
-      <View style={styles.authInputContainer}>
+
+      <View style={Styles.authInputContainer}>
         <View>
-          <View>
-            <Ionicons
-              name="mail-outline"
-              color={'#AEAEAE'}
-              size={20}
-              style={styles.authInputIcon}
-            />
-            <TextInput
-              style={styles.authTextInput}
-              placeholder={'Enter your e-mail'}
-              placeholderTextColor={'#AEAEAE'}
-              onChangeText={setEmail}
-            />
-          </View>
-          <View>
-            <Ionicons
-              name="lock-closed-outline"
-              color={'#AEAEAE'}
-              size={20}
-              style={styles.authInputIcon}
-            />
-            <TextInput
-              style={styles.authTextInput}
-              placeholder={'Enter your password'}
-              placeholderTextColor={'#AEAEAE'}
-              onChangeText={setPassword}
-              secureTextEntry={true}
-              textContentType={"password"}
-            />
-          </View>
+          <Ionicons
+            name="mail-outline"
+            color="#AEAEAE"
+            size={20}
+            style={Styles.authInputIcon}
+          />
+          <TextInput
+            style={Styles.authTextInput}
+            placeholder="Enter your email"
+            placeholderTextColor="#AEAEAE"
+            onChangeText={setLocalEmail}
+            value={localEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
         </View>
-        <View style={styles.authButtonContainer}>
-            <TouchableOpacity style={styles.authButtonStyle} onPress={()=> signIn()}>
-                    <Text style={styles.authButtonText}>Sign In</Text>
-            </TouchableOpacity>
-            
+
+        <View>
+          <Ionicons
+            name="lock-closed-outline"
+            color="#AEAEAE"
+            size={20}
+            style={Styles.authInputIcon}
+          />
+          <TextInput
+            style={Styles.authTextInput}
+            placeholder="Enter your password"
+            placeholderTextColor="#AEAEAE"
+            onChangeText={setLocalPassword}
+            value={localPassword}
+            secureTextEntry
+          />
         </View>
-        <View style={styles.authNewMemberContainer}>
-        <Text style={styles.authSubText}>Are you new member ?</Text>
-            <TouchableOpacity onPress={()=> navigation.navigate("SignUp")}>
-                <Text style={styles.signUpText}>Sign Up</Text>
-            </TouchableOpacity>
+
+        <View style={Styles.authButtonContainer}>
+          <TouchableOpacity
+            style={[Styles.authButtonStyle, loading && { opacity: 0.6 }]}
+            onPress={handleSignIn}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={Styles.authButtonText}>Sign In</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        <View style={Styles.authNewMemberContainer}>
+          <Text style={Styles.authSubText}>Are you a new member?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('SignUp' as never)}>
+            <Text style={Styles.signUpText}>Sign Up</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -66,4 +113,3 @@ const SignIn = () => {
 };
 
 export default SignIn;
-
